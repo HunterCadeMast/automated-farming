@@ -1,0 +1,114 @@
+class FarmingStateMachine:
+    def __init__(self):
+        self.state = 'Idle'
+
+    def start_planting(self):
+        if self.state == 'Idle':
+            print("Starting planting...")
+            self.state = 'Planting'
+        else:
+            print("Cannot start planting from the current state.")
+
+    def finish_planting(self):
+        if self.state == 'Planting':
+            print("Planting complete. Transitioning to Growing...")
+            self.state = 'Growing'
+        else:
+            print("Cannot finish planting from the current state.")
+
+    def harvest(self):
+        if self.state == 'Growing':
+            print("Harvesting crops...")
+            self.state = 'Idle'
+        else:
+            print("Cannot harvest from the current state.")
+
+    def detect_safety_issue(self):
+        print("Safety issue detected. Transitioning to Safety Alert.")
+        self.state = 'Safety Alert'
+
+# Create an instance of the state machine
+farm_simulator = FarmingStateMachine()
+
+# Example usage
+farm_simulator.start_planting()
+farm_simulator.finish_planting()
+farm_simulator.harvest()
+farm_simulator.detect_safety_issue()
+
+#################################################################################################
+
+class Field:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.grid = [[' ' for _ in range(cols)] for _ in range(rows)]  # Initialize an empty field
+        self.vehicle_row = 0
+        self.vehicle_col = 0
+
+    def add_obstacle(self, row, col, obstacle):
+        self.grid[row][col] = obstacle
+
+    def display_field(self):
+        for row in self.grid:
+            print(' '.join(row))
+
+    def move_vehicle(self, new_row, new_col):
+        if 0 <= new_row < self.rows and 0 <= new_col < self.cols:
+            if self.grid[new_row][new_col] == ' ':
+                # Move the vehicle
+                self.grid[self.vehicle_row][self.vehicle_col] = ' '
+                self.grid[new_row][new_col] = 'V'  # 'V' represents the vehicle
+                self.vehicle_row = new_row
+                self.vehicle_col = new_col
+                return True
+            else:
+                print("Obstacle detected! Cannot move.")
+        else:
+            print("Invalid move. Out of bounds.")
+
+###########################################################################################################
+
+class VehicleStateMachine:
+    def __init__(self, field):
+        self.field = field
+        self.state = 'Idle'
+
+    def start_moving(self, new_row, new_col):
+        if self.state == 'Idle':
+            if self.field.move_vehicle(new_row, new_col):
+                print("Vehicle is moving...")
+                self.state = 'Moving'
+            else:
+                print("Cannot start moving. Obstacle detected.")
+        else:
+            print("Cannot start moving from the current state.")
+
+    def stop_moving(self):
+        if self.state == 'Moving':
+            print("Vehicle has stopped.")
+            self.state = 'Idle'
+        else:
+            print("Cannot stop moving from the current state.")
+
+# Example usage
+if __name__ == "__main__":
+    my_field = Field(rows=5, cols=5)
+
+    # Add obstacles
+    my_field.add_obstacle(2, 3, 'A')  # Animal obstacle at row 2, col 3
+    my_field.add_obstacle(4, 1, '|')  # Stick obstacle at row 4, col 1
+
+    my_vehicle_state_machine = VehicleStateMachine(field=my_field)
+
+    # Start moving the vehicle
+    my_vehicle_state_machine.start_moving(2, 2)
+
+    # Display the updated field
+    my_field.display_field()
+
+    # Stop moving the vehicle
+    my_vehicle_state_machine.stop_moving()
+
+    # Display the field after stopping
+    my_field.display_field()
