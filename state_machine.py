@@ -1,3 +1,4 @@
+from field import Field
 class State(object):
     """
     We define a state object which provides some utility functions for the
@@ -6,6 +7,7 @@ class State(object):
 
     def __init__(self):
         print('Processing current state:', str(self))
+        self.field = Field()
 
     def on_event(self, event):
         """
