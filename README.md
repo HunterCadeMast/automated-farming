@@ -4,6 +4,8 @@
 For my project, I had started with trying to create a fully automated vehicle state machine for farming. I was shown a lot of the complexity of such a system.
 Below are the instructions to run the program and some of the commands that are being called for each state. Thought this might be helpful to see and a short description of each of the state.
 
+Here is also the website where I learned to create a state machine: https://dev.to/karn/building-a-simple-state-machine-in-python
+
 ---------- Files ----------
 
 We had 4 files:
