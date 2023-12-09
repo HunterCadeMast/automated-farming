@@ -4,6 +4,7 @@ from automated_states import idle, drive, harvest, plant, obstacleDetection, edg
 from field import Field
 
 class FarmingVehicle(object):
+    # Initializes variables.
     def __init__(self):
         self.state = idle()
         self.field = Field()
@@ -12,13 +13,16 @@ class FarmingVehicle(object):
         self.y = 0
         self.orientation = 'N'
 
+    # Sends command to the state machine.
     def on_event(self, event):
         self.state = self.state.on_event(event)
 
+    # Checks on status of tanks if they exceed our desired harvest or plant goal.
     def crop_status(self):
         threshold = 0.95
         return (self.field.harvested_count / self.field.total_tiles >= threshold or self.field.planted_count / self.field.total_tiles >= threshold)
 
+    # Moves vehicle throughout field. Also, will count moves so if vehicle does not infinitely loop.
     def move(self):
         next_x, next_y = self.calculate_next_position()
         if not isinstance(self.state, drive):
@@ -36,6 +40,7 @@ class FarmingVehicle(object):
         self.x, self.y = next_x, next_y
         self.field.print_field()
 
+    # Automatically runs through different commands depending on the current state. Will also start from idle() and set vehicle into the field.
     def automatic_movement(self):
         self.state = self.state.on_event('start')
         self.field.set_vehicle_position(self.x, self.y)
@@ -44,13 +49,16 @@ class FarmingVehicle(object):
             self.on_event(decision)
             time.sleep(0.1)
 
+    # Changes the state depending on current state of the field.
     def make_decision(self):
         next_x, next_y = self.calculate_next_position()
         current_x = self.x
         current_y = self.y
         if isinstance(self.state, drive):
+            # Makes sure vehicle does not run infinitely.
             if self.move_count > 30:
                 return 'stop'
+            # Checks all tiles around for grown when edge or object appears.
             elif self.field.get_tile_state(next_x, next_y) == 'Grown':
                 return 'harvest'
             elif self.field.get_tile_state(next_x, next_y) == 'Empty':
@@ -79,7 +87,7 @@ class FarmingVehicle(object):
             elif self.field.get_tile_state(current_x, current_y - 1) == 'Empty' and not self.is_approaching_edge(current_x, current_y - 1):
                 self.orientation = 'S'
                 return 'plant'
-            # Should move through harvested or planted tiles if no grown or empty tiles adjacent
+            # Should move through harvested or planted tiles adjacent if no grown or empty tiles are adjacent.
             elif self.field.get_tile_state(next_x, next_y) == 'Harvested':
                 self.move()
                 return 'continue'
@@ -118,14 +126,18 @@ class FarmingVehicle(object):
                 self.orientation = 'S'
                 self.move()
                 return 'continue'
+            # Checks if obstacle is blocking path.
             elif self.field.is_obstacle_at(next_x, next_y):
                 return 'obstacle'
+            # Checks if edge is blocking path.
             elif self.is_approaching_edge(next_x, next_y):
                 return 'edge'
+            # Checks if crop status exceeds the threshold.
             elif self.crop_status():
                 return 'stop'
             else:
-                return 'stop'
+                return 'safety'
+        # Moves around similar to the drive state, but for harvesting.
         if isinstance(self.state, harvest):
             if self.field.get_tile_state(next_x, next_y) == 'Planted' or self.field.get_tile_state(next_x, next_y) == 'Harvested':
                 return 'drive'
@@ -137,6 +149,7 @@ class FarmingVehicle(object):
                 return 'stop'
             self.move()
             return 'continue'
+        # Moves around similar to the drive state, but for planting.
         if isinstance(self.state, plant):
             if self.field.get_tile_state(next_x, next_y) == 'Planted' or self.field.get_tile_state(next_x, next_y) == 'Harvested':
                 return 'drive'
@@ -148,6 +161,7 @@ class FarmingVehicle(object):
                 return 'stop'
             self.move()
             return 'continue'
+        # Chooses action to move from obstacle depending on surrounding tiles.
         if isinstance(self.state, obstacleDetection):
             next_x, next_y = self.calculate_next_position()
             if self.try_turn_left():
@@ -162,6 +176,7 @@ class FarmingVehicle(object):
                 return 'drive'
             else:
                 return 'stop'
+        # Chooses action to move from edge depending on surrounding tiles.
         if isinstance(self.state, edgeDetection):
             next_x, next_y = self.calculate_next_position()
             if self.try_turn_left():
@@ -177,6 +192,7 @@ class FarmingVehicle(object):
             else:
                 return 'stop'
 
+    # Calculates the next position ahead depending on the orientation of vehicle.
     def calculate_next_position(self):
         next_x = self.x
         next_y = self.y
@@ -190,6 +206,7 @@ class FarmingVehicle(object):
             next_x += 1
         return next_x, next_y
 
+    # Changes orientation to the left.
     def turn_left(self):
         if self.orientation == 'N':
             self.orientation = 'W'
@@ -200,6 +217,7 @@ class FarmingVehicle(object):
         elif self.orientation == 'W':
             self.orientation = 'S'
 
+    # Checks if a left turn is available.
     def try_turn_left(self):
         given_x = self.x
         given_y = self.y
@@ -214,6 +232,7 @@ class FarmingVehicle(object):
         valid_move = self.field.is_within_bounds(given_x, given_y) and not self.field.is_obstacle_at(given_x, given_y)
         return valid_move
 
+    # Changes orientation to the right.
     def turn_right(self):
         if self.orientation == 'N':
             self.orientation = 'E'
@@ -224,6 +243,7 @@ class FarmingVehicle(object):
         elif self.orientation == 'W':
             self.orientation = 'N'
 
+    # Checks if a right turn is available.
     def try_turn_right(self):
         given_x = self.x
         given_y = self.y
@@ -238,9 +258,11 @@ class FarmingVehicle(object):
         valid_move = self.field.is_within_bounds(given_x, given_y) and not self.field.is_obstacle_at(given_x, given_y)
         return valid_move
 
+    # Checks if specific tile is within the bounds.
     def is_approaching_edge(self, next_x, next_y):
         return (next_x >= self.field.width or next_y >= self.field.height)
 
+# Runs program.
 if __name__ == "__main__":
     farming_vehicle = FarmingVehicle()
     farming_vehicle.automatic_movement()
