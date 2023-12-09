@@ -7,6 +7,7 @@ Below are the instructions to run the program and some of the commands that are 
 ---------- Files ----------
 
 We had 4 files:
+
     1. automated_farming.py
         - This is the main file. This moves our vehicle through the field while also giving commands to the "automated_states.py" file.
     2. automated_states.py
@@ -36,6 +37,7 @@ We had 4 files:
 
 idle():
 System will start from this command. Otherwise, nothing happens.
+
     1. start
         - drive()
     2. safety
@@ -43,6 +45,7 @@ System will start from this command. Otherwise, nothing happens.
 
 drive():
 Drives through field, but does not plant or harvest. Safer way of moving through the field.
+
     1. harvest
         - harvest()
     2. plant
@@ -60,6 +63,7 @@ Drives through field, but does not plant or harvest. Safer way of moving through
 
 harvest():
 Harvests field.
+
     1. drive
         - drive()
     2. stop
@@ -75,6 +79,7 @@ Harvests field.
 
 plant():
 Plants field.
+
     1. drive
         - drive()
     2. stop
@@ -90,6 +95,7 @@ Plants field.
 
 obstacleDetection():
 Detects obstacles and moves accordingly.
+
     1. drive
         - drive()
     2. harvest
@@ -103,6 +109,7 @@ Detects obstacles and moves accordingly.
 
 edgeDetection():
 Detects edges and moves accordingly.
+
     1. drive
         - drive()
     2. harvest
