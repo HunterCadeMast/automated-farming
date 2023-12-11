@@ -1,23 +1,7 @@
-# automated-farming
 ---------- READ ME ----------
 
 For my project, I had started with trying to create a fully automated vehicle state machine for farming. I was shown a lot of the complexity of such a system.
 Below are the instructions to run the program and some of the commands that are being called for each state. Thought this might be helpful to see and a short description of each of the state.
-
-Here is also the website where I learned to create a state machine: https://dev.to/karn/building-a-simple-state-machine-in-python
-
----------- Files ----------
-
-We had 4 files:
-
-    1. automated_farming.py
-        - This is the main file. This moves our vehicle through the field while also giving commands to the "automated_states.py" file.
-    2. automated_states.py
-        - This is an object which controls our current state.
-    3. state_machine.py
-        - This is an object which holds the format for each of our states.
-    4. field.py
-        - This is where the field is initialized and how we access some information regarding tiles.
 
 ---------- How to Run ----------
 
@@ -35,11 +19,13 @@ We had 4 files:
     2. Inside of the project folder, type "python automated_farming.py".
     3. Program should run through the field, but may become stuck. In such case, exit the program. "Ctrl + C" seemed to work best for me.
 
+    There are also files for "monte_carlo_search_tree.py" and "breadth_first_search.py", which happen to try and optimize routes. 
+    They still have some bugs with them, but seem to give an idea on how these would work with automated farming. Run the same way, but with their respective files.
+
 ---------- Commands ----------
 
 idle():
 System will start from this command. Otherwise, nothing happens.
-
     1. start
         - drive()
     2. safety
@@ -47,7 +33,6 @@ System will start from this command. Otherwise, nothing happens.
 
 drive():
 Drives through field, but does not plant or harvest. Safer way of moving through the field.
-
     1. harvest
         - harvest()
     2. plant
@@ -65,7 +50,6 @@ Drives through field, but does not plant or harvest. Safer way of moving through
 
 harvest():
 Harvests field.
-
     1. drive
         - drive()
     2. stop
@@ -81,7 +65,6 @@ Harvests field.
 
 plant():
 Plants field.
-
     1. drive
         - drive()
     2. stop
@@ -97,7 +80,6 @@ Plants field.
 
 obstacleDetection():
 Detects obstacles and moves accordingly.
-
     1. drive
         - drive()
     2. harvest
@@ -111,7 +93,6 @@ Detects obstacles and moves accordingly.
 
 edgeDetection():
 Detects edges and moves accordingly.
-
     1. drive
         - drive()
     2. harvest
