@@ -13,6 +13,12 @@ class Field(object):
         self.full_state = 'NULL'
         self.initialize_obstacles()
         self.initialize_states()
+        self.visited_states = set()
+        self.previous_state = 'NULL'
+        self.x = 0
+        self.y = 0
+        self.orientation = 'N'
+        self.move_count = 0
 
     # Initalizes obstacles into the field.
     def initialize_obstacles(self):
